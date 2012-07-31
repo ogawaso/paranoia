@@ -23,7 +23,8 @@ module Paranoia
   end
 
   def restore!
-    update_attribute_or_column :deleted_at, nil
+    self.class.only_deleted.update_all("deleted_at = NULL", self.id)
+#    update_attribute_or_column :deleted_at, nil
   end
 
   def destroyed?
@@ -42,7 +43,7 @@ end
 class ActiveRecord::Base
   def self.acts_as_paranoid
     alias_method :force_destroy, :destroy
-    alias_method :force_delete!,  :delete
+    alias_method :force_delete,  :delete
     include Paranoia
     default_scope :conditions => { :deleted_at => nil }
   end

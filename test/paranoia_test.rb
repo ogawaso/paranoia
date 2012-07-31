@@ -93,48 +93,49 @@ class ParanoiaTest < Test::Unit::TestCase
     assert_equal model, ParanoidModel.only_deleted.last
     assert_equal false, ParanoidModel.only_deleted.include?(model2)
   end
-  
+
   def test_delete_behavior_for_callbacks
     model = CallbackModel.new
     model.save
     model.delete
     assert_equal nil, model.instance_variable_get(:@callback_called)
   end
-  
+
   def test_destroy_behavior_for_callbacks
     model = CallbackModel.new
     model.save
     model.destroy
     assert model.instance_variable_get(:@callback_called)
   end
-  
+
   def test_restore
     model = ParanoidModel.new
     model.save
     id = model.id
+    p id
     model.destroy
-    
+
     assert model.destroyed?
-    
+
     model = ParanoidModel.only_deleted.find(id)
     model.restore!
-    
-    assert_equal false, model.destroyed?
+
+    assert_equal false, model.reload.destroyed?
   end
-  
+
   def test_real_destroy
     model = ParanoidModel.new
     model.save
-    model.destroy!
-    
+    model.force_destroy
+
     assert_equal false, ParanoidModel.unscoped.exists?(model.id)
   end
-  
+
   def test_real_delete
     model = ParanoidModel.new
     model.save
-    model.delete!
-    
+    model.force_delete
+
     assert_equal false, ParanoidModel.unscoped.exists?(model.id)
   end
 
