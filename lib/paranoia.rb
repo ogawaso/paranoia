@@ -23,7 +23,7 @@ module Paranoia
   end
 
   def restore!
-    self.class.only_deleted.update_all("deleted_at = NULL", self.id)
+    self.class.only_deleted.update_all("deleted_at = NULL", ["id = ?", self.id])
 #    update_attribute_or_column :deleted_at, nil
   end
 
